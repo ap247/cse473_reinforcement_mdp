@@ -64,17 +64,33 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         """
         V_(k + 1) (s) <- max sum_s'( T(s, a, s') * [ R(s, a, s') + disc. * V_k(s') ] )
+
+        self.
         """
 
         "*** YOUR CODE HERE ***"
 
         states = self.mdp.getStates()
 
-        for state in states:
+        i = 0
 
+        for state in states:
+            self.values[state] = 0
 
         for i in range(1, self.iterations):
-            discount = self.discount ** i
+
+            for state in states:
+                actions = self.mdp.getPossibleActions(state)
+                qVals = []
+                for action in actions:
+                    stateProbs = self.mdp.getTransitionStatesAndProbs(state, action)
+
+                    sumProbs = 0
+
+                    for nextState in stateProbs.keys():
+                        sumProbs += stateProbs[nextState] * ( self.mdp.getReward(state, action, nextState) + self.discount * self.values[nextState])
+
+                self.values[state] = max(qVals)
 
 
     def getValue(self, state):
@@ -90,6 +106,9 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
+
+
+
         util.raiseNotDefined()
 
     def computeActionFromValues(self, state):
@@ -102,6 +121,9 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
+
+
+
         util.raiseNotDefined()
 
     def getPolicy(self, state):
