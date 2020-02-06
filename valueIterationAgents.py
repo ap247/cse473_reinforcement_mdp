@@ -75,17 +75,22 @@ class ValueIterationAgent(ValueEstimationAgent):
         for state in states:
             self.values[state] = 0
 
+        stateDict = self.values.copy()
+
         for i in range(0, self.iterations):
 
             for state in states:
-                actions = self.mdp.getPossibleActions(state)
                 qVals = []
                 if self.mdp.isTerminal(state):
                     qVals.append(0)
                 else:
+                    actions = self.mdp.getPossibleActions(state)
                     for action in actions:
                         qVals.append(self.getQValue(state, action))
-                self.values[state] = max(qVals)
+                stateDict[state] = max(qVals)
+
+            for state in states:
+                self.values[state] = stateDict[state]
 
 
     def getValue(self, state):
@@ -107,8 +112,8 @@ class ValueIterationAgent(ValueEstimationAgent):
         sumProbs = 0
 
         for i in range(0, len(stateProbs)):
-            sumProbs += stateProbs[i][1] * (
-                        self.mdp.getReward(state, action, stateProbs[i][0]) + self.discount * self.values[stateProbs[i][0]])
+            sumProbs += stateProbs[i][1] * (self.mdp.getReward(state, action, stateProbs[i][0])
+                                            + self.discount * self.values[stateProbs[i][0]])
 
         return sumProbs
 
@@ -128,7 +133,7 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         else:
             actions = self.mdp.getPossibleActions(state)
-            bestQValue = - float("inf")
+            bestQValue =  float("-inf")
             for action in actions:
                 if self.getQValue(state, action) > bestQValue:
                     bestQValue = self.getQValue(state, action)
